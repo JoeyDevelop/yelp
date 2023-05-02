@@ -1,12 +1,13 @@
 require('dotenv').config();
 
 const express = require('express');
-// const morgan = require('morgan')
+const cors = require("cors")
 // Require database
 const db = require('./db')
 
 const app = express();
 
+app.use(cors())
 //Middleware to parse body
 app.use(express.json())
 
@@ -49,6 +50,7 @@ app.get('/api/v1/restaurants/:id', async (req, res) => {
 // Create a restaurant
 app.post('/api/v1/restaurants', async (req, res) => {
   try {
+    // Parameterized query to protect from sql attacks
     const results = await db.query(
       "INSERT INTO restaurants (name, location, price_range) VALUES ($1, $2, $3) RETURNING *",
       [
@@ -71,6 +73,7 @@ app.post('/api/v1/restaurants', async (req, res) => {
 // Update a restaurant
 app.put('/api/v1/restaurants/:id', async (req, res) => {
   try {
+    // Parameterized query to protect from sql attacks
     const results = await db.query("UPDATE restaurants SET name = $1, location = $2, price_range = $3 WHERE id = $4 returning *",
     [
       req.body.name,
@@ -93,6 +96,7 @@ app.put('/api/v1/restaurants/:id', async (req, res) => {
 app.delete('/api/v1/restaurants/:id', async (req, res) => {
 
   try {
+    // Parameterized query to protect from sql attacks
     const results = await db.query("DELETE FROM restaurants WHERE id = $1", [req.params.id]);
 
     res.status(204).json({
