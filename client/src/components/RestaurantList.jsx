@@ -1,10 +1,29 @@
 import React, { useEffect, useContext } from 'react' 
+import { useNavigate } from 'react-router-dom'
 import RestaurantFinder from '../apis/RestaurantFinder'
 import { RestaurantsContext } from '../context/RestaurantsContext'
 
 function RestaurantList(props) {
   // retrieve the state and functions from the context
   const [restaurants, setRestaurants] = useContext(RestaurantsContext)
+  // Used to reroute users to correct update page
+  const navigate = useNavigate()
+
+  const handleUpdate = (id) => {
+    // navigate to correct url
+    navigate(`restaurants/${id}/update`);
+    }
+
+    const handleDelete = async (id) => {
+    try {
+      const response = await RestaurantFinder.delete(`/${id}`)
+      console.log(response);
+      // PROBABLY BAD PRACTICE, WORKS FOR NOW
+      window.location.reload()
+    } catch (err) {
+      console.error(err)
+    }
+    }
 
   // make an API call to the server to get a list of restaurants
   useEffect(() => {
@@ -19,17 +38,6 @@ function RestaurantList(props) {
 
     fetchData()
   },[setRestaurants])
-
-  const handleDelete = async (id) => {
-    try {
-      const response = await RestaurantFinder.delete(`/${id}`)
-      console.log(response);
-      // PROBABLY BAD PRACTICE, WORKS FOR NOW
-      window.location.reload()
-    } catch (err) {
-      console.error(err)
-    }
-  }
    
   return (
     <div>
@@ -53,7 +61,7 @@ function RestaurantList(props) {
                 <td>{restaurant.location}</td>
                 <td>{"$".repeat(restaurant.price_range)}</td>
                 <td>reviews</td>
-                <td><button className="btn btn-warning">Update</button></td>
+                <td><button onClick={() => handleUpdate(restaurant.id)} className="btn btn-warning">Update</button></td>
                 <td><button onClick={() => handleDelete(restaurant.id)} className="btn btn-danger">Delete</button></td>
               </tr>
               )
