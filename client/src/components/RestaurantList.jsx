@@ -9,12 +9,16 @@ function RestaurantList(props) {
   // Used to reroute users to correct update page
   const navigate = useNavigate()
 
-  const handleUpdate = (id) => {
+  const handleUpdate = (e, id) => {
+    // Prevents project from opening detail page on clicking button
+    e.stopPropagation();
     // navigate to correct url
     navigate(`restaurants/${id}/update`);
     }
 
-    const handleDelete = async (id) => {
+  const handleDelete = async (e, id) => {
+    // Prevents project from opening detail page on clicking button
+    e.stopPropagation();
     try {
       const response = await RestaurantFinder.delete(`/${id}`)
       console.log(response);
@@ -23,7 +27,12 @@ function RestaurantList(props) {
     } catch (err) {
       console.error(err)
     }
-    }
+  }
+
+  const restaurantSelect = (id) => {
+    // Send users to restaurant review page
+    navigate(`restaurants/${id}`)
+  }
 
   // make an API call to the server to get a list of restaurants
   useEffect(() => {
@@ -38,7 +47,7 @@ function RestaurantList(props) {
 
     fetchData()
   },[setRestaurants])
-   
+  
   return (
     <div>
       <div className="list-group">
@@ -56,13 +65,13 @@ function RestaurantList(props) {
           <tbody>
             {restaurants.map(restaurant => {
               return (
-              <tr key={restaurant.id}>
+              <tr onClick={() => restaurantSelect(restaurant.id)} key={restaurant.id}>
                 <td>{restaurant.name}</td>
                 <td>{restaurant.location}</td>
                 <td>{"$".repeat(restaurant.price_range)}</td>
                 <td>reviews</td>
-                <td><button onClick={() => handleUpdate(restaurant.id)} className="btn btn-warning">Update</button></td>
-                <td><button onClick={() => handleDelete(restaurant.id)} className="btn btn-danger">Delete</button></td>
+                <td><button onClick={(e) => handleUpdate(e, restaurant.id)} className="btn btn-warning">Update</button></td>
+                <td><button onClick={(e) => handleDelete(e, restaurant.id)} className="btn btn-danger">Delete</button></td>
               </tr>
               )
             })}

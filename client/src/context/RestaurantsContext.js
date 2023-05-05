@@ -4,9 +4,11 @@ export const RestaurantsContext = createContext();
 
 // Used to pass props to all components without having to do it for every one manually. Import to app.jsx
 export const RestaurantsContextProvider = props => {
-  const [restaurants, setRestaurants] =useState([])
+  const [restaurants, setRestaurants] = useState([])
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null)
+
   return (
-    <RestaurantsContext.Provider value={[restaurants, setRestaurants]}>
+    <RestaurantsContext.Provider value={[restaurants, setRestaurants, selectedRestaurant, setSelectedRestaurant]}>
       {props.children}
     </RestaurantsContext.Provider>
   )
